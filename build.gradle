@@ -1,0 +1,33 @@
+group 'com.aleksandrbogomolov'
+version '0.1'
+
+apply plugin: 'scala'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven {
+        url "http://nexusrepo.corp.tander.ru:8080/nexus/content/groups/public/"
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.11.8',
+            'com.typesafe:config:1.3.1',
+            'ch.qos.logback:logback-classic:1.2.3',
+            'com.typesafe.scala-logging:scala-logging_2.11:3.7.2'
+    testCompile 'junit:junit:4.12'
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-class': 'Main',
+                'Class-Path': 'scala-library.jar'
+    }
+    baseName = "${project.name}-all"
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
